@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Important</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .download-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+          footer {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) { 
+            /* Adjust styles for smaller screens (e.g., mobile) */
+            footer {
+                padding: 0.5rem 0; /* Reduce padding on smaller screens */
+            }
+        }
+.download-pdf{
+text-align: center;
+
+padding-bottom: 10px;
+}
+
+   .download-btn1 {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <h1>Important Link</h1>
+<div class="download-pdf">
+    <td><a href="https://drive.google.com/file/d/1d80uaan74V7Fnc5ezYC8FYCU0oBTCIem/view?usp=sharing" class="download-btn1">Download PDF All Chapter</a></td>
+</div>
+    <br>
+    <table>
+        <tr>
+            <th>Particular</th>
+            <th>Link</th>
+        </tr>
+        <tr>
+            <td>1. Youtube Video Download </td>
+            <td><a href="https://en1.savefrom.net/21-youtube-to-mp4-37Nq.html" class="download-btn">Link</a></td>
+        </tr>
+
+        <tr>
+            <td>2.Image Background Remove </td>
+            <td><a href="https://www.remove.bg/" class="download-btn">Link</a></td>
+        </tr>
+
+
+        </table>
+
+    <br>
+<br>
+<br>
+        <footer>
+            <p>&copy; 2025 Govardhan Skill Centre. All rights reserved.</p>
+        </footer>
+
+
+</body>
+</html>

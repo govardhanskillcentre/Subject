@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PPT Subbmission</title>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
+    <style>
+      .form-container {
+        max-width: 500px;
+        margin: auto;
+        margin-top: 50px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+      }
+      .center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 40%;
+  padding-bottom: 10px;
+}
+h4{
+  font-weight: 1000;
+  font-size: 40px;
+}
+label{
+  font-weight: 600;
+
+}
+
+
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container">
+      <div class="form-container">
+        <div class="img-head">
+        <img class="center"src="https://govardhanskillcentre.github.io/student/gsc%20logo.png" alt="">
+      </div>
+        <h4 class="text-center mb-4">Seminar PPT <br> Submission Form</h4>
+        <form id="submit-to-google-sheet">
+          <div class="form-group">
+            <label for="Name">Full Name ( तुमचे नाव )</label>
+            <input
+              class="form-control"
+              type="text"
+              name="Name"
+              id="Name"
+              placeholder="Full Name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Topic Of Seminar( सेमिनर चा विषय )
+               </label>
+            <input
+              class="form-control"
+              type="text"
+              Name="Topic Of Seminar"
+              id="email"
+              placeholder="Topic Of Seminar"
+              required
+            />
+          </div>
+          
+
+          <div class="form-group">
+            <label for="Section">Section (सेक्शन) :</label>
+            <select class="form-control" name="Section" id="Section" required>
+              <option value="" disabled selected hidden>Choose...</option>
+              <option value="Agriculture & Animal Husbandry ( 453 )">Agriculture & Animal Husbandry ( 453 )</option>
+              <option value="Our Health / Food Processing ( 452 )">Our Health / Food Processing ( 452 )</option>
+              <option value="Our Home Enviourement / Electrical ( 455 )">Our Home Enviourement / Electrical ( 455 )</option>
+              <option value="Rural Engineering / Workshop ( 454 )">Rural Engineering / Workshop ( 454 )</option>
+              <option value="Welding Technology ( 257 )">Welding Technology ( 257 )</option>
+              <option value="Electrical Technisium ( 601 , 602 & 701, 702 )">Electrical Technisium ( 601 , 602 & 701, 702 )</option>
+            </select>
+          </div>
+          
+            <div class="form-group mt-2">
+                <label for="media" class="form-check-label">Upload PPT ( पिपीटी इथे अपलोड करावी )
+                </label>
+                <input class="form-control-file" type="file" name="media" id="media" required/>
+            </div>
+
+          <div class="form-group form-check mt-2">
+            <input class="form-check-input" type="checkbox" id="Condition1" />
+            <label class="form-check-label" for="Condition1"
+              > My PowerPoint presentation has been shown to and reviewed by my guide.
+             <br> ( माझी पिपीटी ही माझ्या मार्गदर्शक कडून दाखवून व तपासून घेतली आहे.)</label
+            >
+          </div>
+          
+          <div class="form-group form-check">
+            <input class="form-check-input" type="checkbox" id="Condition2" required />
+            <label class="form-check-label" for="Condition2"
+              > The video has been downloaded and inserted into the PowerPoint presentation.
+            <br>  ( पिपीटी मध्ये विडियो हे download करून इन्सर्ट केले आहे  . )
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" style="background-color: green;">
+            Submit Form
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+        const scriptURL =                       
+        "https://script.google.com/macros/s/AKfycbwiK9RFwzbQTX7aK9hd5FP9GB6PAYsxs08i96pQFpEFYPMOT-zGSTSC1tLdB9s5uzSI/exec";
+        const form = document.forms["submit-to-google-sheet"];
+        const fileInput = document.getElementById("media");
+
+        form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                var ex = document.getElementById("Condition1").checked;
+                var age = document.getElementById("Condition2").checked;
+               
+                if (Condition1) {
+                    formData.append("Condition1", "Yes");
+                } else {
+                    formData.append("Condition1", "No");
+                }
+
+                if (Condition2) {
+                    formData.append("Condition2", "Yes");
+                } else {
+                    formData.append("Condition2", "No");
+                }
+
+                // Handle the file upload
+                const fileInput = document.getElementById("media");
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const reader = new FileReader();
+
+                    // Size validation here, only less than 2MB allowed
+                    if (file.size > 1024 * 1024 * 2) {
+                        swal("Error", "File size should be less than 2MB.", "error");
+                        return;
+                    }
+
+                    reader.onload = async function () {
+                        formData.append("media", reader.result.split(",")[1]); // Append base64 data
+                        await submitForm(formData);
+                    };
+
+                    reader.readAsDataURL(file);
+                } else {
+                    // No file uploaded
+                    await submitForm(formData);
+                }
+                });
+
+        async function submitForm(formData) {
+            // Get the submit button and change its text to "Loading..."
+            const submitButton = document.querySelector("button[type='submit']");
+            submitButton.disabled = true;
+            submitButton.innerText = "Loading...";
+
+            // Submit the form data to the Google Sheet
+            fetch(scriptURL, { method: "POST", body: formData })
+                .then((response) => {
+                    swal("Done", "Submitted Successfully.", "success");
+                    form.reset();
+                })
+                .catch((error) => {
+                    swal("Error", "Something went wrong. Please try again!", "error");
+                })
+                .finally(() => {
+                    // Reset the submit button back to "Submit"
+                    submitButton.disabled = false;
+                    submitButton.innerText = "Submit";
+                });
+        }
+
+    </script>
+  </body>
+</html>

@@ -90,7 +90,8 @@ label{
             <div class="form-group mt-2">
                 <label for="media" class="form-check-label">Upload PPT ( पिपीटी इथे अपलोड करावी )
                 </label>
-                <input class="form-control-file" type="file" name="media" id="media" required/>
+                <input class="form-control-file" type="file" name="media" id="media" accept=".pptx"
+                 required/>
             </div>
 
           <div class="form-group form-check mt-2">
@@ -146,7 +147,7 @@ label{
                     const reader = new FileReader();
 
                     // Size validation here, only less than 2MB allowed
-                    if (file.size > 1024 * 1024 * 2) {
+                    if (file.size > 1024 * 1024 * 100) {
                         swal("Error", "File size should be less than 2MB.", "error");
                         return;
                     }

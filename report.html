@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Management & Report</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: #f5f7fa; }
+    header { background: #34495e; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { margin: 0; font-size: 20px; }
+    nav a { color: white; margin-left: 20px; text-decoration: none; font-size: 15px; }
+    nav a:hover { text-decoration: underline; }
+    .container { max-width: 1000px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    h2 { margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
+    input, textarea, select, button { padding: 8px; margin: 6px 0; border: 1px solid #ccc; border-radius: 5px; width: 100%; }
+    button { background: #2980b9; color: white; border: none; cursor: pointer; transition: 0.2s; }
+    button:hover { background: #1c5980; }
+    .task { padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin: 8px 0; background: #f9f9f9; }
+    .task b { color: #2c3e50; }
+    .task-actions { margin-top: 8px; }
+    .task-actions button { margin-right: 8px; padding: 5px 10px; font-size: 13px; }
+    .task-actions .edit { background: #f39c12; }
+    .task-actions .delete { background: #e74c3c; }
+    .hidden { display: none; }
+    .row { display: flex; gap: 10px; }
+    .row > div { flex: 1; }
+    .report { padding: 20px; border: 1px solid #333; background: #fff; border-radius: 8px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📊 Task Manager</h1>
+  <nav>
+    <a href="#" onclick="showPage('createPage')">Create Task</a>
+    <a href="#" onclick="showPage('historyPage')">Task History</a>
+    <a href="#" onclick="showPage('reportPage')">Report</a>
+  </nav>
+</header>
+
+<div class="container" id="createPage">
+  <h2>Create New Task</h2>
+  <div class="row">
+    <div><input id="title" placeholder="Task Title"></div>
+    <div><input id="date" type="date"></div>
+  </div>
+  <textarea id="desc" placeholder="Task Description"></textarea>
+  <div class="row">
+    <div>
+      <select id="type">
+        <option value="Internal Work">Internal Work</option>
+        <option value="External Work">External Work</option>
+        <option value="Lab Work">Lab Work</option>
+      </select>
+    </div>
+    <div>
+      <select id="status">
+        <option value="Open">Open</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Done">Done</option>
+      </select>
+    </div>
+  </div>
+  <button onclick="saveTask()">Save Task</button>
+  <button onclick="clearForm()" style="background:#7f8c8d">Clear</button>
+</div>
+
+<div class="container hidden" id="historyPage">
+  <h2>Task History</h2>
+  <div id="taskList"></div>
+</div>
+
+<div class="container hidden" id="reportPage">
+  <h2>Generate Report</h2>
+  <div class="row">
+    <div>From: <input id="fromDate" type="date"></div>
+    <div>To: <input id="toDate" type="date"></div>
+  </div>
+  <button onclick="generateReport()">Generate Report</button>
+  <button onclick="exportPDF()" style="background:#27ae60">Download PDF</button>
+  <div id="reportContent" class="report"></div>
+</div>
+
+<script>
+  let editingId = null;
+
+  window.onload = () => { loadTasks(); showPage('createPage'); };
+
+  function showPage(pageId) {
+    document.getElementById("createPage").classList.add("hidden");
+    document.getElementById("historyPage").classList.add("hidden");
+    document.getElementById("reportPage").classList.add("hidden");
+    document.getElementById(pageId).classList.remove("hidden");
+    if (pageId === "historyPage") loadTasks();
+  }
+
+  function getTasks() {
+    return JSON.parse(localStorage.getItem("tasks") || "[]");
+  }
+
+  function setTasks(tasks) {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }
+
+  function loadTasks() {
+    const tasks = getTasks();
+    const container = document.getElementById("taskList");
+    container.innerHTML = "";
+    if (tasks.length === 0) {
+      container.innerHTML = "<p>No tasks found.</p>";
+      return;
+    }
+    tasks.forEach((t, i) => {
+      const div = document.createElement("div");
+      div.className = "task";
+      div.innerHTML = `
+        <b>${t.title}</b> (${t.type}) - <i>${t.status}</i><br>
+        ${t.desc || ""}<br>
+        Date: ${t.date}
+        <div class="task-actions">
+          <button class="edit" onclick="editTask(${i})">Edit</button>
+          <button class="delete" onclick="deleteTask(${i})">Delete</button>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function saveTask() {
+    const title = document.getElementById("title").value;
+    const desc = document.getElementById("desc").value;
+    const date = document.getElementById("date").value;
+    const type = document.getElementById("type").value;
+    const status = document.getElementById("status").value;
+
+    if (!title || !date) return alert("Please enter title and date!");
+
+    const tasks = getTasks();
+    const task = { title, desc, date, type, status };
+
+    if (editingId !== null) {
+      tasks[editingId] = task;
+      editingId = null;
+    } else {
+      tasks.push(task);
+    }
+    setTasks(tasks);
+    clearForm();
+    alert("Task saved successfully!");
+  }
+
+  function editTask(i) {
+    const t = getTasks()[i];
+    document.getElementById("title").value = t.title;
+    document.getElementById("desc").value = t.desc;
+    document.getElementById("date").value = t.date;
+    document.getElementById("type").value = t.type;
+    document.getElementById("status").value = t.status;
+    editingId = i;
+    showPage("createPage");
+  }
+
+  function deleteTask(i) {
+    const tasks = getTasks();
+    if (!confirm("Delete this task?")) return;
+    tasks.splice(i, 1);
+    setTasks(tasks);
+    loadTasks();
+  }
+
+  function clearForm() {
+    document.getElementById("title").value = "";
+    document.getElementById("desc").value = "";
+    document.getElementById("date").value = "";
+    document.getElementById("type").value = "Internal Work";
+    document.getElementById("status").value = "Open";
+    editingId = null;
+  }
+
+  function generateReport() {
+    const fromDate = document.getElementById("fromDate").value;
+    const toDate = document.getElementById("toDate").value;
+    const reportDiv = document.getElementById("reportContent");
+
+    const tasks = getTasks().filter(t => {
+      const d = new Date(t.date);
+      return (!fromDate || d >= new Date(fromDate)) && (!toDate || d <= new Date(toDate));
+    });
+
+    if (tasks.length === 0) {
+      reportDiv.innerHTML = "<p>No tasks in this range.</p>";
+      return;
+    }
+
+    let html = `<h3>Report (${fromDate || "start"} to ${toDate || "end"})</h3>`;
+    html += `<p><b>Total tasks:</b> ${tasks.length}</p>`;
+
+    const grouped = {};
+    tasks.forEach(t => {
+      if (!grouped[t.type]) grouped[t.type] = [];
+      grouped[t.type].push(t);
+    });
+
+    for (let type in grouped) {
+      html += `<h4>${type}</h4><ul>`;
+      grouped[type].forEach(t => {
+        html += `<li><b>${t.title}</b> (${t.status}) - ${t.desc} [${t.date}]</li>`;
+      });
+      html += `</ul>`;
+    }
+
+    reportDiv.innerHTML = html;
+  }
+
+  async function exportPDF() {
+    const element = document.getElementById("reportContent");
+    if (!element.innerHTML.trim()) return alert("No report to export!");
+    const canvas = await html2canvas(element, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jspdf.jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("status-report.pdf");
+  }
+</script>
+
+</body>
+</html>
